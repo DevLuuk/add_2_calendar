@@ -36,7 +36,7 @@ public class Add2CalendarPlugin implements MethodCallHandler {
             }
         } else if (call.method.equals("removeFromCal")) {
             try {
-                remove((int) call.argument("id"), (String) call.argument("title"), (String) call.argument("desc"), (String) call.argument("location"), (long) call.argument("startDate"), (long) call.argument("endDate"), (boolean) call.argument("allDay"));
+                remove((int) call.argument("id"));
                 result.success(true);
             } catch (NullPointerException e) {
                 result.error("Exception ocurred in Android code", e.getMessage(), false);
@@ -62,16 +62,10 @@ public class Add2CalendarPlugin implements MethodCallHandler {
     }
 
     @SuppressLint("NewApi")
-    public void remove(int id, String title, String desc, String loc, long start, long end, boolean allDay) {
+    public void remove(int id) {
         Context context = getActiveContext();
         Intent intent = new Intent(Intent.ACTION_DELETE, CalendarContract.Events.CONTENT_URI);
         intent.putExtra(CalendarContract.Events.CALENDAR_ID, id);
-        intent.putExtra(CalendarContract.Events.TITLE, title);
-        intent.putExtra(CalendarContract.Events.DESCRIPTION, desc);
-        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, loc);
-        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start);
-        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
-        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, allDay);
         context.startActivity(intent);
     }
 
