@@ -64,7 +64,7 @@ public class Add2CalendarPlugin implements MethodCallHandler {
     @SuppressLint("NewApi")
     public void remove(int id) {
         Context context = getActiveContext();
-        Intent intent = new Intent(Intent.ACTION_DELETE, CalendarContract.Events.CONTENT_URI);
+        Intent intent = new Intent(Intent.ACTION_EDIT, CalendarContract.Events.CONTENT_URI);
         intent.putExtra(CalendarContract.Events.CALENDAR_ID, id);
         context.startActivity(intent);
     }
