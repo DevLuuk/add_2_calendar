@@ -1,8 +1,10 @@
 package com.javih.add2calendar;
 
 import android.annotation.SuppressLint;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.CalendarContract;
 
 import io.flutter.plugin.common.MethodCall;
@@ -13,6 +15,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /** Add2CalendarPlugin */
 public class Add2CalendarPlugin implements MethodCallHandler {
+    private static final String AGENDA_URI_BASE = "content://com.android.calendar/events";
     private final Registrar mRegistrar;
 
     public Add2CalendarPlugin(Registrar registrar) {
@@ -59,14 +62,19 @@ public class Add2CalendarPlugin implements MethodCallHandler {
         intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
         intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, allDay);
         context.startActivity(intent);
+//        Uri uri = context.getContentResolver().insert(CalendarContract.Events.CONTENT_URI, intent);
+//        long eventID = Long.parseLong(uri.getLastPathSegment());
     }
 
     @SuppressLint("NewApi")
     public void remove(int id) {
         Context context = getActiveContext();
-        Intent intent = new Intent(Intent.ACTION_EDIT, CalendarContract.Events.CONTENT_URI);
-        intent.putExtra(CalendarContract.Events.CALENDAR_ID, id);
-        context.startActivity(intent);
+//        Intent intent = new Intent(Intent.ACTION_EDIT, CalendarContract.Events.CONTENT_URI);
+//        intent.putExtra(CalendarContract.Events.CALENDAR_ID, id);
+//        context.startActivity(intent);
+        Uri eventUri = ContentUris
+                .withAppendedId(Uri.parse(AGENDA_URI_BASE), id);
+            context.getContentResolver().delete(eventUri, null, null);
     }
 
     private Context getActiveContext() {
