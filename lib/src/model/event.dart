@@ -1,13 +1,15 @@
 import 'package:flutter/foundation.dart';
 
-/// Class that holds eache event's info.
+/// Class that holds each event's info.
 class Event {
+  int id;
   String title, description, location;
   DateTime startDate, endDate;
   bool allDay;
 
   Event(
-      {@required this.title,
+      {this.id,
+      @required this.title,
       this.description = '',
       this.location = '',
       @required this.startDate,
