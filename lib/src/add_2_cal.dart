@@ -8,8 +8,8 @@ class Add2Calendar {
       const MethodChannel('flutter.javih.com/add_2_calendar');
 
   /// Add an Event (object) to user's default calendar.
-  static Future<bool> addEvent2Cal(Event event) async {
-    final bool isAdded =
+  static Future<int> addEvent2Cal(Event event) async {
+    final int isAdded =
         await _channel.invokeMethod('add2Cal', <String, dynamic>{
       'id': event.id,
       'title': event.title,

@@ -36,11 +36,10 @@ public class Add2CalendarPlugin implements MethodCallHandler {
     public void onMethodCall(MethodCall call, Result result) {
         if (call.method.equals("add2Cal")) {
             try {
-              insert((int) call.argument("id"), (String) call.argument("title"), (String) call.argument("desc"), (String) call.argument("location"), (long) call.argument("startDate"), (long) call.argument("endDate"), (boolean) call.argument("allDay"));
-                result.success(true);
-                //return eventId;
+              int eventId = insert((int) call.argument("id"), (String) call.argument("title"), (String) call.argument("desc"), (String) call.argument("location"), (long) call.argument("startDate"), (long) call.argument("endDate"), (boolean) call.argument("allDay"));
+                result.success(eventId);
             } catch (NullPointerException e) {
-                result.error("Exception ocurred in Android code", e.getMessage(), false);
+                result.error("Exception ocurred in Android code", e.getMessage(), 0);
             }
         } else if (call.method.equals("removeFromCal")) {
             try {
@@ -58,30 +57,42 @@ public class Add2CalendarPlugin implements MethodCallHandler {
     @SuppressLint("NewApi")
     public int insert(int id, String title, String desc, String loc, long start, long end, boolean allDay) {
         Context context = getActiveContext();
-//        Intent intent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
-//        intent.putExtra(CalendarContract.Events._ID, id);
-//        intent.putExtra(CalendarContract.Events.TITLE, title);
-//        intent.putExtra(CalendarContract.Events.DESCRIPTION, desc);
-//        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, loc);
-//        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start);
-//        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
-//        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, allDay);
-//        context.startActivity(intent);
+        Intent intent = new Intent(Intent.ACTION_INSERT, CalendarContract.Events.CONTENT_URI);
+        intent.putExtra(CalendarContract.Events._ID, id);
+        intent.putExtra(CalendarContract.Events.CALENDAR_ID, id);
+        intent.putExtra(CalendarContract.Events.TITLE, title);
+        intent.putExtra(CalendarContract.Events.DESCRIPTION, desc);
+        intent.putExtra(CalendarContract.Events.EVENT_LOCATION, loc);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, start);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end);
+        intent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, allDay);
+       context.startActivity(intent);
+            int calId = tryParse(CalendarContract.Events._ID);
 
-        ContentResolver cr = context.getContentResolver();
-        ContentValues values = new ContentValues();
-        values.put(CalendarContract.Events.DTSTART, start);
-        values.put(CalendarContract.Events.DTEND, end);
-        values.put(CalendarContract.Events.TITLE, title);
-        values.put(CalendarContract.Events.ALL_DAY, allDay);
-        values.put(CalendarContract.Events.DESCRIPTION, desc);
-        values.put(CalendarContract.Events.EVENT_LOCATION, loc);
-        //values.put(CalendarContract.Events.CALENDAR_ID, CALENDAR_ID);
-            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+       return calId;
+//        ContentResolver cr = context.getContentResolver();
+//        ContentValues values = new ContentValues();
+//        values.put(CalendarContract.Events.DTSTART, start);
+//        values.put(CalendarContract.Events.DTEND, end);
+//        values.put(CalendarContract.Events.TITLE, title);
+//        values.put(CalendarContract.Events.ALL_DAY, allDay);
+//        values.put(CalendarContract.Events.DESCRIPTION, desc);
+//        values.put(CalendarContract.Events.EVENT_LOCATION, loc);
+//        values.put(CalendarContract.Events.CALENDAR_ID, 1);
+//        values.put(CalendarContract.Events.EVENT_TIMEZONE, "Europe/Amsterdam");
+//            Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
+//
+//            // get the event ID that is the last element in the Uri
+//            long eventID = Long.parseLong(uri.getLastPathSegment());
+//            return (int) eventID;
+    }
 
-            // get the event ID that is the last element in the Uri
-            long eventID = Long.parseLong(uri.getLastPathSegment());
-            return (int) eventID;
+    public static Integer tryParse(String text) {
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     @SuppressLint("NewApi")
@@ -91,7 +102,8 @@ public class Add2CalendarPlugin implements MethodCallHandler {
 //        intent.putExtra(CalendarContract.Events.CALENDAR_ID, id);
 //        context.startActivity(intent);
         Uri eventUri = ContentUris
-                .withAppendedId(Uri.parse(AGENDA_URI_BASE), id);
+                .withAppendedId(CalendarContract.Events.CONTENT_URI, id);
+        //context.getApplication().getContentResolver().delete(deleteUri, null, null);
             context.getContentResolver().delete(eventUri, null, null);
     }
 
