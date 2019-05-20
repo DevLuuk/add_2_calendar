@@ -24,10 +24,10 @@ class Add2Calendar {
 
   /// Remove an Event (object) to user's default calendar.
   static Future<bool> removeEventFromCal(int eventId) async {
-    final bool isAdded =
+    final bool isRemoved =
         await _channel.invokeMethod('removeFromCal', <String, dynamic>{
       'id': eventId,
     });
-    return isAdded;
+    return isRemoved;
   }
 }
